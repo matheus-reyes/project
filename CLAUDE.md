@@ -13,6 +13,7 @@
 
 ## Shared rules
 - Language: English for everything in the repo: code, comments, commit messages, docs, ADRs and PRDs
+- Pull requests follow `.github/pull_request_template.md`: fill What Changed, How to test and Proof
 <!-- TODO: commit convention, branch naming -->
 
 ## Docs
