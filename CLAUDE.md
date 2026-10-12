@@ -16,7 +16,6 @@
 <!-- TODO: commit convention, branch naming -->
 
 ## Docs
-- New document: copy the folder's `0000-template.md` and use the next free number
 - Never rewrite an accepted ADR; supersede it with a new one
 - Before a change that contradicts an accepted ADR, stop and ask
 
