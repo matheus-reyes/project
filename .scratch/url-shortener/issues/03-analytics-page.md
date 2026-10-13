@@ -1,6 +1,6 @@
 # 03: Analytics page
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 02
 Budget: ~12 min
 
@@ -42,3 +42,7 @@ The creator of a Short Link opens `/analytics/{code}` and sees the total Clicks,
 3. Copy the URL into a new tab. The same page loads.
 4. `/analytics/zzzzzzz` shows the not-found state.
 5. `make test` passes.
+
+## Comments
+
+- `StatsResponse` also returns `shortUrl`, `originalUrl` and `expiresAt` so the Analytics header needs one request; `spec.md` is updated. Referrers with the same count are ordered alphabetically.

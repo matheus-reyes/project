@@ -5,4 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("app")
 data class AppProperties(
     val baseUrl: String = "http://localhost:8080",
-)
+) {
+    fun shortUrlFor(shortCode: String): String = "${baseUrl.trimEnd('/')}/$shortCode"
+}

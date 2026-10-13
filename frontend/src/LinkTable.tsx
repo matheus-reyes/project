@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { ShortLinkListItem } from './api'
 
 type Props = {
@@ -29,7 +30,9 @@ function LinkTable({ links, fetchedAt }: Props) {
         {links.map((link) => (
           <tr key={link.shortCode}>
             <td>
-              <code>{link.shortCode}</code>
+              <Link to={`/analytics/${link.shortCode}`} title="View analytics">
+                <code>{link.shortCode}</code>
+              </Link>
               {isExpired(link, fetchedAt) && <span className="badge">expired</span>}
             </td>
             <td className="original-url" title={link.originalUrl}>

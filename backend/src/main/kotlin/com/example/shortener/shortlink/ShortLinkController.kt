@@ -76,7 +76,7 @@ class ShortLinkController(
     private fun ShortLink.toResponse() =
         ShortLinkResponse(
             shortCode = shortCode,
-            shortUrl = "${properties.baseUrl.trimEnd('/')}/$shortCode",
+            shortUrl = properties.shortUrlFor(shortCode),
             originalUrl = originalUrl,
             createdAt = createdAt,
             expiresAt = expiresAt,

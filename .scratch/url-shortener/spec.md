@@ -32,7 +32,8 @@ Prototype built and tested in about 45 minutes. Domain terms follow `GLOSSARY.md
   "originalUrl": "https://example.com", "createdAt": "...", "expiresAt": null }
 
 // StatsResponse
-{ "shortCode": "aB3xK9q", "totalClicks": 12,
+{ "shortCode": "aB3xK9q", "shortUrl": "http://localhost:8080/aB3xK9q",
+  "originalUrl": "https://example.com", "expiresAt": null, "totalClicks": 12,
   "clicksByDay": [{ "date": "2026-09-14", "count": 0 }, "... 30 entries, oldest first"],
   "topReferrers": [{ "referrer": "direct", "count": 7 }, { "referrer": "google.com", "count": 5 }] }
 
