@@ -2,10 +2,17 @@
 
 ## Stack
 - React web app; run every command below from `frontend/`
-<!-- TODO: language (TypeScript?), build tool (Vite?), package manager (npm/pnpm/yarn), Node version -->
+- Language: TypeScript
+- Build tool: Vite (dev server on `:5173`, proxies `/api` to the backend on `:8080`)
+- Package manager: npm
+- Node: 20.19+ or 22.12+ (required by Vite)
 
 ## Commands
-<!-- TODO: install, dev server, build, test all, test one file, lint, format -->
+- Install: `npm ci`
+- Dev server: `npm run dev`
+- Build (type-checks first): `npm run build`
+- Lint: `npm run lint`
+- Tests: none for now; frontend tests are out of scope for the prototype
 
 ## Linting
 - ESLint must include `eslint-plugin-react-hooks` with its recommended config; it enforces the Rules of Hooks and checks effect dependencies
@@ -32,4 +39,7 @@
 - Call Hooks only from React function components or custom Hooks; never from regular JavaScript functions
 
 ## Conventions
-<!-- TODO: component and hook patterns, state management, styling, how to call the backend API -->
+- Call the backend only through `src/api.ts`, with relative `/api/...` paths; the API returns errors as `{ "error": "..." }`
+- Local component state with `useState`; no state library
+- Plain CSS in `src/index.css`; no CSS framework
+<!-- TODO: component and hook patterns as the app grows -->
