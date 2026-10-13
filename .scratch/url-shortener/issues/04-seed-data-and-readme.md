@@ -1,6 +1,6 @@
 # 04: Seed data and README
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 03
 Budget: ~8 min
 
@@ -33,3 +33,7 @@ A fresh `make dev` already shows realistic data on the Home and Analytics pages.
 2. Open the Analytics page of a seeded link. Bars spread across the 30 days, and four Referrers appear.
 3. Follow the README demo script from a clean clone. It works without extra steps.
 4. `make test` and `make lint` pass.
+
+## Comments
+
+- Seeded codes are fixed (`kotlin1`, `spring1`, `expired`) so the README demo can name them. `.page` widened to 880px so the link table fits the Short URL column.
