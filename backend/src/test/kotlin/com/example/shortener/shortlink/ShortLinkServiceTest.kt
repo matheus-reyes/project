@@ -1,5 +1,6 @@
 package com.example.shortener.shortlink
 
+import com.example.shortener.click.InMemoryClickRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -18,7 +19,7 @@ class ShortLinkServiceTest {
     private fun serviceAt(
         instant: Instant,
         generator: ShortCodeGenerator = SecureRandomShortCodeGenerator(),
-    ) = ShortLinkService(repository, generator, Clock.fixed(instant, ZoneOffset.UTC))
+    ) = ShortLinkService(repository, InMemoryClickRepository(), generator, Clock.fixed(instant, ZoneOffset.UTC))
 
     @Test
     fun `creates a short link stamped with the clock`() {

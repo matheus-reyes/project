@@ -8,6 +8,8 @@ interface ShortLinkRepository {
     fun saveIfAbsent(link: ShortLink): Boolean
 
     fun findByCode(shortCode: String): ShortLink?
+
+    fun findAll(): List<ShortLink>
 }
 
 @Repository
@@ -17,4 +19,6 @@ class InMemoryShortLinkRepository : ShortLinkRepository {
     override fun saveIfAbsent(link: ShortLink): Boolean = links.putIfAbsent(link.shortCode, link) == null
 
     override fun findByCode(shortCode: String): ShortLink? = links[shortCode]
+
+    override fun findAll(): List<ShortLink> = links.values.toList()
 }

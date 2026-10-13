@@ -1,6 +1,6 @@
 # 02: Click tracking and link list
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01
 Budget: ~10 min
 
@@ -33,3 +33,7 @@ Every redirect records a Click, and the Home page lists all Short Links with the
 2. Open the first link three times. Refresh the Home page: it shows `3` for that link and `0` for the other, and the newest link is on top.
 3. Create a link that expires in one minute, wait, and open it. The browser gets `410`, and the list shows the "expired" badge with the count unchanged.
 4. `make test` passes.
+
+## Comments
+
+- The Referrer drops a leading `www.`, so `www.google.com` and `google.com` count as one site. The Home list reloads after a create, on the Refresh button, and when the window regains focus.

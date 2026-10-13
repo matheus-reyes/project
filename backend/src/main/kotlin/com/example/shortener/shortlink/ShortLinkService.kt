@@ -1,14 +1,23 @@
 package com.example.shortener.shortlink
 
+import com.example.shortener.click.Click
+import com.example.shortener.click.ClickRepository
+import com.example.shortener.click.referrerOf
 import org.springframework.stereotype.Service
 import java.net.URI
 import java.net.URISyntaxException
 import java.time.Clock
 import java.time.Instant
 
+data class ShortLinkSummary(
+    val link: ShortLink,
+    val clickCount: Int,
+)
+
 @Service
 class ShortLinkService(
     private val repository: ShortLinkRepository,
+    private val clicks: ClickRepository,
     private val generator: ShortCodeGenerator,
     private val clock: Clock,
 ) {
@@ -33,6 +42,32 @@ class ShortLinkService(
         if (link.isExpiredAt(clock.instant())) throw ShortLinkExpiredException(shortCode)
         return link
     }
+
+    /** Resolves the link and records a Click; unknown or expired links record nothing. */
+    fun follow(
+        shortCode: String,
+        referer: String?,
+        userAgent: String?,
+        ip: String?,
+    ): ShortLink {
+        val link = resolve(shortCode)
+        clicks.save(
+            Click(
+                shortCode = shortCode,
+                timestamp = clock.instant(),
+                referrer = referrerOf(referer),
+                userAgent = userAgent,
+                ip = ip,
+            ),
+        )
+        return link
+    }
+
+    fun list(): List<ShortLinkSummary> =
+        repository
+            .findAll()
+            .sortedByDescending { it.createdAt }
+            .map { ShortLinkSummary(it, clicks.countByShortCode(it.shortCode)) }
 
     private fun validUrl(url: String?): String {
         val trimmed = url?.trim().orEmpty()

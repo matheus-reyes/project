@@ -45,3 +45,7 @@ A user creates a Short Link in the browser and is redirected when they open it. 
 3. Shorten `ftp://x.com`. The form shows the error.
 4. `curl -i localhost:8080/zzzzzzz` returns `404`.
 5. `make test` and `make lint` pass.
+
+## Comments
+
+- Implemented in 938032f with Spring Boot 4.1.1, Kotlin 2.3.21, React 19 and Vite 8. The Vite template ships oxlint; it was replaced with ESLint plus `eslint-plugin-react-hooks` per `frontend/CLAUDE.md`.

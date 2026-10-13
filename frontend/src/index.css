@@ -60,3 +60,67 @@ body {
 .result a {
   font-weight: 600;
 }
+
+.links {
+  margin-top: 32px;
+}
+
+.links-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.links-header button {
+  padding: 6px 12px;
+  font: inherit;
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.link-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+}
+
+.link-table th,
+.link-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.link-table th {
+  font-size: 0.875rem;
+  color: #59636e;
+}
+
+.link-table .numeric {
+  text-align: right;
+}
+
+.original-url {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  color: #9a6700;
+  background: #fff8c5;
+  border: 1px solid #d4a72c;
+  border-radius: 999px;
+}
+
+.empty {
+  color: #59636e;
+}

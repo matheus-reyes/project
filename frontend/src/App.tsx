@@ -1,5 +1,11 @@
-import { type FormEvent, useState } from 'react'
-import { ApiError, type ShortLink, shortenUrl } from './api'
+import { type FormEvent, useEffect, useState } from 'react'
+import { ApiError, listUrls, type ShortLink, type ShortLinkListItem, shortenUrl } from './api'
+import LinkTable from './LinkTable'
+
+type LinkList = {
+  items: ShortLinkListItem[]
+  fetchedAt: number
+}
 
 function App() {
   const [url, setUrl] = useState('')
@@ -7,6 +13,35 @@ function App() {
   const [created, setCreated] = useState<ShortLink | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [links, setLinks] = useState<LinkList | null>(null)
+  const [listError, setListError] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  useEffect(() => {
+    let ignore = false
+    function load() {
+      listUrls()
+        .then((items) => {
+          if (ignore) return
+          setLinks({ items, fetchedAt: Date.now() })
+          setListError(null)
+        })
+        .catch(() => {
+          if (!ignore) setListError('could not load links')
+        })
+    }
+    load()
+    // Clicks happen in other tabs, so reload the counts when the user comes back
+    window.addEventListener('focus', load)
+    return () => {
+      ignore = true
+      window.removeEventListener('focus', load)
+    }
+  }, [refreshKey])
+
+  function refresh() {
+    setRefreshKey((key) => key + 1)
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -22,6 +57,7 @@ function App() {
       setCreated(link)
       setUrl('')
       setExpiresAt('')
+      refresh()
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'could not reach the server')
     } finally {
@@ -68,6 +104,24 @@ function App() {
           </a>
         </p>
       )}
+      <section className="links">
+        <div className="links-header">
+          <h2>Links</h2>
+          <button type="button" onClick={refresh}>
+            Refresh
+          </button>
+        </div>
+        {listError && (
+          <p className="error" role="alert">
+            {listError}
+          </p>
+        )}
+        {links ? (
+          <LinkTable links={links.items} fetchedAt={links.fetchedAt} />
+        ) : (
+          !listError && <p className="empty">Loading…</p>
+        )}
+      </section>
     </main>
   )
 }
