@@ -1,6 +1,7 @@
 package com.example.shortener.shortlink
 
 import com.example.shortener.MutableClock
+import com.example.shortener.PostgresTestConfiguration
 import org.hamcrest.Matchers.matchesPattern
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
@@ -20,7 +21,7 @@ import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(ShortLinkApiTest.ClockConfig::class)
+@Import(PostgresTestConfiguration::class, ShortLinkApiTest.ClockConfig::class)
 class ShortLinkApiTest {
     @TestConfiguration
     class ClockConfig {

@@ -6,23 +6,24 @@ Shortens URLs, redirects visitors, and records every click so each link has an a
 
 - JDK 17. Gradle comes with the wrapper; no global install is needed.
 - Node.js 20.19+ or 22.12+, with npm.
+- Docker with Compose v2. `make dev` runs Postgres in a container, and the tests start their own with Testcontainers.
 - `make`.
 
 ## Run
 
 ```sh
 make install   # download backend dependencies and install frontend packages
-make dev       # API on http://localhost:8080, web app on http://localhost:5173
+make dev       # Postgres on :5432, API on http://localhost:8080, web app on http://localhost:5173
 ```
 
-Open http://localhost:5173. `Ctrl+C` stops both services.
+Open http://localhost:5173. `Ctrl+C` stops the API and the web app; Postgres keeps running, and its data lives in a Docker volume. `make db-stop` stops it, and `make db-reset` deletes the volume.
 
-The backend loads demo data on startup: three links, one of them expired, with about 190 clicks spread over the last 30 days. Set `app.seed.enabled=false` in `backend/src/main/resources/application.properties` to start empty.
+On startup Flyway applies the migrations in `backend/src/main/resources/db/migration`, then the backend loads demo data: three links, one of them expired, with about 190 clicks spread over the last 30 days. The seed only inserts links that are missing, so a restart adds nothing. The demo dates are relative to the first start; run `make db-reset` to bring them back to the last 30 days. Set `app.seed.enabled=false` in `backend/src/main/resources/application.properties` to start empty.
 
 ## Test and lint
 
 ```sh
-make test   # backend unit and MockMvc tests
+make test   # backend unit, repository and MockMvc tests; needs Docker running
 make lint   # ktlint for the backend, ESLint for the frontend
 ```
 
@@ -53,13 +54,16 @@ Errors come back as `{ "error": "..." }`. The full contract is in [`.scratch/url
 
 - **Backend: Kotlin + Spring Boot.** Spring Boot gives routing, JSON, validation and an integration-test harness (MockMvc) with no setup, which matters in a time-boxed build. Kotlin keeps the models short: data classes, null safety, and expression bodies.
 - **Frontend: React + TypeScript + Vite.** Vite starts in under a second and proxies `/api` to the backend, so the browser sees one origin and no CORS setup is needed. TypeScript keeps the API types in step with the backend responses.
+- **Postgres with plain SQL.** The data is two tables and a handful of queries, so `JdbcClient` with hand-written SQL is enough; JPA would add entity mapping and lazy-loading rules without removing any code. Flyway versions the schema.
 - **No chart library.** The per-day chart is 30 CSS bars with a hover tooltip. A library would add weight for a single chart.
 
 ## Design decisions
 
-### In-memory storage behind interfaces
+### Storage behind interfaces
 
-Short Links and Clicks live in `ConcurrentHashMap`s behind `ShortLinkRepository` and `ClickRepository`. A database was out of scope for the prototype, and the interfaces mark the seam where one goes later: a JPA or JDBC implementation replaces the in-memory class, and the services do not change. Time comes from an injected `java.time.Clock`, so expiry and per-day grouping are tested with a fixed clock.
+Short Links and Clicks live in Postgres, in the `short_links` and `clicks` tables, behind `ShortLinkRepository` and `ClickRepository`. The first version kept them in memory; the switch to Postgres replaced only those two classes, and the services did not change. The in-memory versions now live in the test sources, so the service unit tests run without a database. The JDBC repositories and the API tests run against a real Postgres started by Testcontainers.
+
+A new code is stored with `INSERT ... ON CONFLICT DO NOTHING`, so two requests can never get the same code, even across instances. Time comes from an injected `java.time.Clock`, so expiry and per-day grouping are tested with a fixed clock.
 
 ### 302 instead of 301
 
@@ -74,7 +78,7 @@ The brief asks for a 301. A 301 is permanent, so browsers cache it and later vis
 
 ## Known limits
 
-- Data is lost on restart, and a single instance holds it all.
+- Stats load every Click of the link and group them in the service. That is fine for thousands of clicks per link; past that, the grouping belongs in SQL. The list also counts clicks with one query per link.
 - No authentication: anyone with a Short Code can see its analytics.
 - The client IP is `request.remoteAddr`. Behind a proxy that is the proxy's address; `X-Forwarded-For` is not trusted without a known proxy in front.
 - No rate limiting, and no check of the destination URL against a blocklist.

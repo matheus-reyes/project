@@ -10,7 +10,7 @@ Prototype built and tested in about 45 minutes. Domain terms follow `GLOSSARY.md
   - `backend/`: Kotlin + Spring Boot on `:8080`. Serves `/api/*` and `GET /{code}`.
   - `frontend/`: React + TypeScript + Vite on `:5173`. Proxies `/api` to `:8080`, so no CORS setup is needed.
 - `make dev` at the repo root starts both. `make test` runs every test.
-- Persistence: in-memory repositories (`ConcurrentHashMap`) behind interfaces, so a database can replace them later.
+- Persistence: Postgres (Docker Compose locally), accessed with `JdbcClient` behind repository interfaces; Flyway owns the schema. The first version used in-memory repositories; the interfaces let Postgres replace them without touching the services.
 - Time comes from an injected `java.time.Clock`, so expiration and per-day aggregation are deterministic in tests.
 - `shortUrl` is built from the `app.base-url` property (default `http://localhost:8080`).
 
@@ -61,7 +61,7 @@ Prototype built and tested in about 45 minutes. Domain terms follow `GLOSSARY.md
 
 ## Out of scope
 
-Authentication, link ownership, custom codes, a database, frontend tests, deployment.
+Authentication, link ownership, custom codes, frontend tests, deployment.
 
 ## Slices
 

@@ -1,6 +1,7 @@
 package com.example.shortener.click
 
 import com.example.shortener.MutableClock
+import com.example.shortener.PostgresTestConfiguration
 import com.jayway.jsonpath.JsonPath
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +22,7 @@ import kotlin.test.assertTrue
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(ClickApiTest.ClockConfig::class)
+@Import(PostgresTestConfiguration::class, ClickApiTest.ClockConfig::class)
 class ClickApiTest {
     @TestConfiguration
     class ClockConfig {

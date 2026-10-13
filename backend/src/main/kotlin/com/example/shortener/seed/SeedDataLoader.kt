@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 
 @Component
@@ -18,14 +19,17 @@ class SeedDataLoader(
 ) : ApplicationRunner {
     private val log = LoggerFactory.getLogger(javaClass)
 
+    @Transactional
     override fun run(args: ApplicationArguments) {
         val seed = SeedData.build(clock.instant())
-        for (link in seed.links) {
-            links.saveIfAbsent(link)
-        }
-        for (click in seed.clicks) {
-            clicks.save(click)
-        }
-        log.info("Seeded {} short links and {} clicks", seed.links.size, seed.clicks.size)
+        // Postgres keeps data across restarts: only links stored now get their clicks, so a rerun adds nothing
+        val newCodes =
+            seed.links
+                .filter { links.saveIfAbsent(it) }
+                .map { it.shortCode }
+                .toSet()
+        val newClicks = seed.clicks.filter { it.shortCode in newCodes }
+        newClicks.forEach(clicks::save)
+        log.info("Seeded {} short links and {} clicks", newCodes.size, newClicks.size)
     }
 }
