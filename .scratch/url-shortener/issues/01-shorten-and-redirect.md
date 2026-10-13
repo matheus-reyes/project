@@ -1,6 +1,6 @@
 # 01: Shorten and redirect (walking skeleton)
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: none
 Budget: ~15 min
 
